@@ -22,9 +22,18 @@
 #include "wiring_private.h"
 
 
+#ifdef USE_TINYUSB
+uint32_t tud_cdc_n_available(uint8_t itf) __attribute__((weak));
+#endif
+
 void serialEventRun(void)
 {
+#ifdef NRF52832_XXAA
   if (serialEvent && Serial.available() ) serialEvent();
+#endif
+#ifdef USE_TINYUSB
+  if (serialEvent && tud_cdc_n_available && tud_cdc_n_available(0)) serialEvent();
+#endif
 
 #if defined(PIN_SERIAL1_RX) && defined(PIN_SERIAL1_TX)
   if (serialEvent1 && Serial1.available() ) serialEvent1();
